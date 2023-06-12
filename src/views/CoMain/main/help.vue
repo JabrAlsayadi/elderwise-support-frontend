@@ -11,7 +11,7 @@
         <div class="help__phone">
             <div class="help__phone__title_main">求助电话</div>
             <div class="help__phone__content">
-                <div v-for="(item, index) in data.phones" :key="index" class="help__phone__content__item">
+                <div v-for="(item, index) in list" :key="index" class="help__phone__content__item">
                     <div class="help__phone__content__item__name">{{ item.agencyName }}</div>
                     <div class="help__phone__content__item__phone">{{ item.phoneNumber }}</div>
                     <div class="help__phone__content__item__event">
@@ -26,21 +26,29 @@
 
 <script setup>
 import Tabbar from '@/components/mobile/comm/tabbar.vue';
-import { reactive } from 'vue';
+import { computed, onMounted, reactive } from 'vue';
 import dayjs from 'dayjs';
+import { phonesList } from '@/api';
+import { showToast } from 'vant';
 
 const data = reactive({
-    phones:[
-            {
-                "agencyName": "警察",
-                "phoneNumber": "119",
-            },
-            {
-                "agencyName": "医院",
-                "phoneNumber": "110",
-            }
-        ]
+    phones:[]
 })
+
+const list = computed(() => {
+    return data.phones
+})
+
+onMounted(() => {
+    phonesList().then(res => {
+        if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+            data.phones = res.data.data
+        }
+    }).catch(err => {
+        showToast('获取电话列表失败, 请稍后重试')
+        console.log(err)
+    })
+}) 
 </script>
 <!-- 246BFD -->
 <style lang="stylus" scoped>

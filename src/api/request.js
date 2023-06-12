@@ -1,16 +1,21 @@
 import axios from 'axios'
 
-
 const createInstance = (config) => {
     const instance = axios.create(Object.assign({}, {
         timeout: 10000,
         responseType: 'json',
-        withCredentials: true,
-        baseURL: process.env.VUE_APP_ENV,
-        headers: {
-            token: localStorage.getItem('token') || ''
-        }
+        withCredential: true,
+        baseURL: process.env.VUE_APP_EX_API,
     }, config));
+
+    instance.interceptors.request.use((config) => {
+        if (config.token) {
+            config.headers['Authorization'] = `Bearer ${config.token}`;
+        }
+        return config;
+    }, error => {
+        return Promise.reject(error);
+    });
 
     instance.interceptors.response.use((response) => {
         const { data } = response
@@ -27,34 +32,38 @@ const createInstance = (config) => {
 
 const request = createInstance()
 
-export const post = (url, data = {}) => {
+export const post = (url, data = {}, token) => {
     return request({
         url,
         method: 'post',
-        data
+        data,
+        token
     });
 }
 
-export const get = (url, data = {}) => {
+export const get = (url, data = {}, token) => {
     return request({
         url,
         method: 'get',
-        data
+        data,
+        token
     });
 }
 
-export const patch = (url, data = {}) => {
+export const patch = (url, data = {}, token) => {
     return request({
         url,
         method: 'patch',
-        data
+        data,
+        token
     });
 }
 
-export const deleteM = (url, data = {}) => {
+export const deleteReq = (url, data = {}, token) => {
     return request({
         url,
         method: 'delete',
-        data
+        data,
+        token
     });
 }

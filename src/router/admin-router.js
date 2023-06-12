@@ -1,12 +1,12 @@
 import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router'
 
 const routes = [
-    {
-        path: '/',
-        name: 'main',
-        meta: { requiresAuth: false },
-        component: () => import(/* webpackChunkName: "main" */'../views/Admin/main.vue')
-    },
+    // {
+    //     path: '/',
+    //     name: 'main',
+    //     meta: { requiresAuth: false },
+    //     component: () => import(/* webpackChunkName: "main" */'../views/Admin/main.vue')
+    // },
     {
         path: '/login',
         name: 'login',
@@ -14,39 +14,33 @@ const routes = [
         component: () => import(/* webpackChunkName: "main" */'../views/Admin/login.vue')
     },
     {
-        path: '/home',
+        path: '/',
         name: 'home',
-        meta: { requiresAuth: false },
+        meta: { requiresAuth: true },
         component: () => import(/* webpackChunkName: "main" */'../views/Admin/home.vue')
     },
     {
         path: '/registeration',
         name: 'registeration',
-        meta: { requiresAuth: false },
+        meta: { requiresAuth: true },
         component: () => import(/* webpackChunkName: "main" */'../views/Admin/registeration.vue')
     },
     {
         path: '/medicine',
         name: 'medicine',
-        meta: { requiresAuth: false },
+        meta: { requiresAuth: true },
         component: () => import(/* webpackChunkName: "main" */'../views/Admin/medicine.vue')
     },
     {
-        path: '/help',
-        name: 'help',
-        meta: { requiresAuth: false },
-        component: () => import(/* webpackChunkName: "main" */'../views/Admin/help.vue')
-    },
-    {
-        path: '/feedback',
-        name: 'feedback',
-        meta: { requiresAuth: false },
-        component: () => import(/* webpackChunkName: "main" */'../views/Admin/feedback.vue')
+        path: '/orders',
+        name: 'orders',
+        meta: { requiresAuth: true },
+        component: () => import(/* webpackChunkName: "main" */'../views/Admin/orders.vue')
     },
     {
         path: '/users',
         name: 'users',
-        meta: { requiresAuth: false },
+        meta: { requiresAuth: true },
         component: () => import(/* webpackChunkName: "main" */'../views/Admin/usermanagment.vue')
     },
 ]
@@ -59,9 +53,9 @@ const router = new createRouter({
 
 
 router.beforeEach((to, from, next) => {
-    const isAuthenticated = localStorage.getItem('token')
+    const isAuthenticated = localStorage.getItem('adminToken')
     if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
-        next({ name: 'Login' })
+        next({ name: 'login' })
     } else {
         next()
     }

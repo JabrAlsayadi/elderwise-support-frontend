@@ -2,35 +2,46 @@
 <template>
     <div class="admin__header">
         <div class="admin__header__list">
-            <div><RouterLink class="link_sty" active-class="a_class" to="/home">Home</RouterLink></div>
-            <div><RouterLink class="link_sty" active-class="a_class" to="/users">Users</RouterLink></div>
-            <div><RouterLink class="link_sty" active-class="a_class" to="/registeration">Registeration</RouterLink></div>
-            <div><RouterLink class="link_sty" active-class="a_class" to="/medicine">Medicine</RouterLink></div>
-            <div><RouterLink class="link_sty" active-class="a_class" to="/help">Help</RouterLink></div>
-            <div><RouterLink class="link_sty" active-class="a_class" to="/feedback">CS Feedback</RouterLink></div>
+            <div><RouterLink class="link_sty" active-class="a_class" to="/">首页</RouterLink></div>
+            <div><RouterLink class="link_sty" active-class="a_class" to="/users">用户管理</RouterLink></div>
+            <div><RouterLink class="link_sty" active-class="a_class" to="/registeration">医院信息</RouterLink></div>
+            <div><RouterLink class="link_sty" active-class="a_class" to="/medicine">药品信息</RouterLink></div>
+            <div><RouterLink class="link_sty" active-class="a_class" to="/orders">订单信息</RouterLink></div>
         </div>
         <div class="admin__header__user">
             <div><van-icon name="manager-o" /></div>
-            <div>18410270621</div>
+            <div>{{ data.userAccount }}</div>
             <div @click="logMethod"><van-icon name="ellipsis" /></div>
         </div>
     </div>
 
     <van-popup round v-model:show="data.show">
         <div class="exit__pop">
-            <div class="exit__pop__text">click button to exit</div>
-            <div class="exit__pop__btn">退出登录</div>
+            <div class="exit__pop__text">确认要退出吗？</div>
+            <div class="exit__pop__btn" @click="logOut">退出登录</div>
         </div>
-    </van-popup>   
+    </van-popup>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
+import router from '@/router/co-router';
+import { reactive, onMounted } from 'vue';
 
 const data = reactive({
-    show: false
+    show: false,
+    userAccount: ''
 })
 
+onMounted(() => {
+    data.userAccount = localStorage.getItem('adminAccount')
+})
+
+const logOut = () => {
+    localStorage.removeItem('adminToken');
+    localStorage.removeItem('adminId');
+    localStorage.removeItem('adminAccount');
+    router.go(0);
+}
 
 const logMethod = () => {
     data.show = true

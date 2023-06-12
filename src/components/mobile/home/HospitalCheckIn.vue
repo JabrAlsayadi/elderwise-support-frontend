@@ -1,39 +1,50 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <div class="check__in">
+    <div class="check__in" v-if="lengthOfData">
         <div class="check__in__hospital" v-for="(item, index) in data.hospitals" :key="index">
             <div class="check__in__hospital__box">
-                <div class="check__in__hospital__box__image">{{ item.name.slice(0,2) }}</div>
+                <div class="check__in__hospital__box__image">{{ item.hospitalName.slice(0,2) }}</div>
                 <div class="check__in__hospital__box__info">
-                    <div class="check__in__hospital__box__info__name">{{ item.name }}</div>
-                    <div class="check__in__hospital__box__info__address">{{ item.address }}</div>
-                    <div class="check__in__hospital__box__info__desc">{{ item.desc }}</div>
+                    <div class="check__in__hospital__box__info__name">{{ item.hospitalName }}</div>
+                    <div class="check__in__hospital__box__info__address">{{ item.hospitalAddress }}</div>
+                    <div class="check__in__hospital__box__info__desc">{{ item.hospitalDesc }}</div>
                 </div>
             </div>
-            <div class="check__in__hospital__button" @click="handleEvent(item.name)">住院</div>
+            <div class="check__in__hospital__button" @click="handleEvent(item.id)">住院</div>
         </div>
+    </div>
+    <div v-else>
+        <van-empty description="暂无住院信息" />
     </div>
 </template>
 
 <script setup>
-
-import { reactive, provide } from 'vue';
+import { reactive, defineProps, computed, watchEffect } from 'vue';
 import router from '@/router/co-router';
+
 const data = reactive({
-    hospitals: [
-        {id: 1, name: '医院名称1', address: '医院地址医院地址医院地址', desc: '医院介绍医院地址医院地址医院地址医院地址医院地址医院地址'},
-        {id: 2, name: '医院名称2', address: '医院地址医院地址医院地址', desc: '医院介绍医院地址医院地址医院地址医院地址医院地址医院地址'},
-        {id: 3, name: '医院名称3', address: '医院地址医院地址医院地址', desc: '医院介绍医院地址医院地址医院地址医院地址医院地址医院地址'},
-    ]
+    hospitals: []
 })
 
-const register = () => {
-    router.push('/checkin-info');
-}
+const props = defineProps({
+    hospitallist: {
+        type: Array,
+        default: () => []
+    },
+})
 
-const handleEvent = (hoispitalName) => {
-    provide('hoispital', hoispitalName)
-    register()
+const lengthOfData = computed(() => {
+    if (data.hospitals.length > 0)
+        return true;
+    return false;
+})
+
+watchEffect(() => {
+    data.hospitals = props.hospitallist;
+})
+
+const handleEvent = (id) => {
+    return router.push(`/checkin-info/${id}`);
 }
 </script>
 

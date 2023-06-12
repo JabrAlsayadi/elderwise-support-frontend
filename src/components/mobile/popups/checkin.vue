@@ -1,62 +1,97 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="medical__regirstrion">
-        <div class="medical__regirstrion__title">Registration Confirm</div>
+        <div class="medical__regirstrion__title">住院下单信息</div>
         <div class="medical__regirstrion__basic-info">
             <div class="medical__regirstrion__basic-info__hoispital-name">
-                <span class="sup__title">Hoispital Name:</span>
-                {{ props.hoispitalName  }}
+                <span class="sup__title">每日费用:</span>
+                {{ props.item.fee  }} 人民币
             </div>
             <div class="medical__regirstrion__basic-info__hoispital-address">
-                <span class="sup__title">Address:</span>
-                {{ props.hoispitalAddress   }}
+                <span class="sup__title">房间类别：</span>
+                {{ props.item.roomType }}
             </div>
             <div class="medical__regirstrion__basic-info__doctor-name">
-                <span class="sup__title">Doctor:</span>
-                {{ props.doctorName  }}
+                <span class="sup__title">楼层:</span>
+                {{ props.item.roomNumber  }}
+                <span class="sup__title">房间号:</span>
+                {{ props.item.roomNumber  }}     
             </div>
             <div class="medical__regirstrion__basic-info__type">
-                <span class="sup__title">Type:</span>
-                {{ props.type  }}
+                <span class="sup__title">床位数:</span>
+                {{ props.item.bedNumber  }}
             </div>
         </div>
         <div class="medical__regirstrion__time">
-            <input type="datetime-local" v-model="registerTime" >
+            <div class="sup__title">住院时间：</div>
+            <input type="datetime-local" v-model="checkInTime">
+            <div class="sup__title">出院时间：</div>
+            <input type="datetime-local" v-model="checkOutTime">
+            <div class="sup__title">支付方式：</div>
             <select v-model="data.choosePaymentMethod">
-                <option value="0">Off Line</option>
-                <option value="1">Online</option>
+                <option value="0">线下</option>
+                <option value="1">线上</option>
             </select>
         </div>
-        <div class="medical__regirstrion__confirm">Confirm</div>
+        <div class="medical__regirstrion__confirm" @click.prevent="submitOrder">确认</div>
     </div>
 </template>
 
 <script setup >
+import { orderRoom } from '@/api';
+import router from '@/router/co-router';
+import { showToast } from 'vant';
 import { reactive } from 'vue';
 import { defineProps } from 'vue';
 
 const props = defineProps({
-    hoispitalName: {
-        type: String,
-        default: ''
-    },
-    hoispitalAddress: {
-        type: String,
-        default: ''
-    },
-    doctorName: {
-        type: String,
-        default: ''
-    },
-    type: {
-        type: String,
-        default: ''
+    item: {
+        type: Object,
+        default: () => {}
     },
 })
 
+const goToRecord = () => {
+    return router.push('/cart')
+}
+
+const submitOrder = () => {
+    orderRoom(
+        {
+            "hospitalId": props.item.hospitalId || 1,
+            "createUser": localStorage.getItem('userId') || 1,
+            "medicineType": props.item.medicineType || 'neike',
+            "roomType": props.item.roomType || 'vip',
+            "bedNumber": props.item.bedNumber || '100',
+            "floorNumber": props.item.floorNumber || '5',
+            "roomNumber": props.item.roomNumber || '501',
+            "fee": props.item.fee || '500',
+            "checkInAt": data.checkInTime || '2023-03-26 00:00:00',
+            "checkOutAt": data.checkOutTime || '2023-03-26 00:00:00',
+            "paymentStatus": data.choosePaymentMethod || 0
+        }
+    ).then(res => {
+        if (res.code.toString() === '0' && res.data.data.toString() > '0') {
+            showToast({
+                message: '下单成功',
+                duration: 1000,
+            });
+            goToRecord();
+            return;
+        }
+        showToast({
+            message: '下单失败',
+            duration: 1000,
+        });
+    }).catch(err => {
+        console.log(err);
+    })
+}
+
 const data = reactive({
-    registerTime: '',
-    choosePaymentMethod: 'Payment Method',
+    checkInTime: '2023-05-05 11:50:00',
+    checkOutTime: '2023-05-26 11:50:00',
+    choosePaymentMethod: 0,
 })
 
 
@@ -80,6 +115,8 @@ const data = reactive({
     &__time
         display flex
         justify-content space-between
+        flex-direction: column
+        align-content: center
         gap 10px
         font-size 16px
         margin 10px 0
@@ -89,6 +126,7 @@ const data = reactive({
             padding: 10px;
             border-radius: 5px;
         & > select
+            width: 96%
             border: 1px solid #065f46;
             padding: 10px;
             border-radius: 5px;

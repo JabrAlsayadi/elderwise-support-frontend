@@ -1,41 +1,53 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <div class="registeration">
-        <div class="registeration__hospital" v-for="(item, index) in data.hospitals" :key="index">
+    <div class="registeration" v-if="len">
+        <div class="registeration__hospital" v-for="(item, index) in data.list" :key="index">
             <div class="registeration__hospital__box">
-                <div class="registeration__hospital__box__image">{{ item.name.slice(0,2) }}</div>
+                <div class="registeration__hospital__box__image">{{ item.hospitalName.slice(0,2) }}</div>
                 <div class="registeration__hospital__box__info">
-                    <div class="registeration__hospital__box__info__name">{{ item.name }}</div>
-                    <div class="registeration__hospital__box__info__address">{{ item.address }}</div>
-                    <div class="registeration__hospital__box__info__desc">{{ item.desc }}</div>
+                    <div class="registeration__hospital__box__info__name">{{ item.hospitalName }}</div>
+                    <div class="registeration__hospital__box__info__address">{{ item.hospitalAddress }}</div>
+                    <div class="registeration__hospital__box__info__desc">{{ item.hospitalDesc }}</div>
                 </div>
             </div>
-            <div class="registeration__hospital__button" @click="handleEvent(item.name)">挂号</div>
+            <div class="registeration__hospital__button" @click="handleEvent(item.id)">挂号</div>
         </div>
+    </div>
+    <div v-else>
+        <van-empty description="暂无挂号信息" />
     </div>
 </template>
 
 <script setup>
 import router from '@/router/co-router';
-import { reactive, provide } from 'vue';
+import { reactive, computed, defineProps, watchEffect } from 'vue';
 
 const data = reactive({
-    hospitals: [
-        {id: 1, name: '医院名称1', address: '医院地址医院地址医院地址', desc: '医院介绍医院地址医院地址医院地址医院地址医院地址医院地址'},
-        {id: 2, name: '医院名称2', address: '医院地址医院地址医院地址', desc: '医院介绍医院地址医院地址医院地址医院地址医院地址医院地址'},
-        {id: 3, name: '医院名称3', address: '医院地址医院地址医院地址', desc: '医院介绍医院地址医院地址医院地址医院地址医院地址医院地址'},
-    ]
+    list: [],
 })
 
-const register = () => {
-    router.push('/register-info');
+const props = defineProps({
+    regList: {
+        type: Array,
+        default: () => []
+    },
+})
+
+watchEffect(() => {
+    data.list = props.regList;
+})
+
+const len =  computed(() => {
+    if (data.list.length > 0) {
+        return true;
+    }
+    return false;
+})
+
+const handleEvent = (id) => {
+    router.push(`/register-info/${id}`);
 }
 
-const handleEvent = (hoispitalName) => {
-    console.log(hoispitalName);
-    provide('hoispital', hoispitalName)
-    register()
-}
 </script>
 
 <style lang="stylus" scoped>

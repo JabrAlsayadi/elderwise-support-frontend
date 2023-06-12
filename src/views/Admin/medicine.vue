@@ -3,206 +3,69 @@
     <Header />
     <div class="registr">
         <div class="registr__title">
-            <div class="registr__title__text">Orders</div>
-            <div class="registr__title__btn">New Order</div>
+            <div class="registr__title__text">药品信息</div>
         </div>
         <div class="registr__normal">
             <div class="registr__normal__titles">
                 <div class="registr__normal__titles__item">Id</div>
-                <div class="registr__normal__titles__item">User</div>
-                <div class="registr__normal__titles__item">Medicine</div>
-                <div class="registr__normal__titles__item">Price</div>
-                <div class="registr__normal__titles__item">Count</div>
-                <div class="registr__normal__titles__item">Type</div>
-                <div class="registr__normal__titles__item">Payment</div>
-                <div class="registr__normal__titles__item">Create At</div>
-                <div class="registr__normal__titles__item">Op</div>
+                <div class="registr__normal__titles__item">创建用户Id</div>
+                <div class="registr__normal__titles__item">药品名称</div>
+                <div class="registr__normal__titles__item">价格</div>
+                <div class="registr__normal__titles__item">数量</div>
+                <div class="registr__normal__titles__item">科室</div>
+                <div class="registr__normal__titles__item">创建时间</div>
             </div>
-            <div class="registr__normal__data" v-for="(item, index) in data.orders" :key="index" >
-                <div class="registr__normal__data__item">{{ item.id }}</div>
-                <div class="registr__normal__data__item">{{ item.createUser }}</div>
-                <div class="registr__normal__data__item">{{ item.createUser }}</div>
-                <div class="registr__normal__data__item">{{ item.medicinePrice }}</div>
-                <div class="registr__normal__data__item">{{ item.medicineCount }}</div>
-                <div class="registr__normal__data__item">{{ item.medicineType }}</div>
-                <div class="registr__normal__data__item">{{ item.paymentStatus }}</div>
-                <div class="registr__normal__data__item">{{ item.createAt.slice(0,10) }}</div>
-                <div class="registr__normal__data__item">...</div>
+            <div v-if="isEmpty">
+                <div class="registr__normal__data" v-for="(item, index) in data.medList" :key="index" >
+                    <div class="registr__normal__data__item">{{ item.id }}</div>
+                    <div class="registr__normal__data__item">{{ item.createUser }}</div>
+                    <div class="registr__normal__data__item">{{ item.medicineName }}</div>
+                    <div class="registr__normal__data__item">{{ item.medicinePrice }}人民币</div>
+                    <div class="registr__normal__data__item">{{ item.medicineCount }}</div>
+                    <div class="registr__normal__data__item">{{ item.medicineType }}</div>
+                    <div class="registr__normal__data__item">{{ item.createAt.slice(0,10) }}</div>
+                </div>
             </div>
-        </div>
-        <div class="registr__title">
-            <div class="registr__title__text">Medicine</div>
-            <div class="registr__title__btn">Add Medicine</div>
-        </div>
-        <div class="registr__normal">
-            <div class="registr__normal__titles">
-                <div class="registr__normal__titles__item">Id</div>
-                <div class="registr__normal__titles__item">User</div>
-                <div class="registr__normal__titles__item">Medicine</div>
-                <div class="registr__normal__titles__item">Price</div>
-                <div class="registr__normal__titles__item">Count</div>
-                <div class="registr__normal__titles__item">Type</div>
-                <div class="registr__normal__titles__item">Payment</div>
-                <div class="registr__normal__titles__item">Create At</div>
-                <div class="registr__normal__titles__item">Op</div>
-            </div>
-            <div class="registr__normal__data" v-for="(item, index) in data.orders" :key="index" >
-                <div class="registr__normal__data__item">{{ item.id }}</div>
-                <div class="registr__normal__data__item">{{ item.createUser }}</div>
-                <div class="registr__normal__data__item">{{ item.createUser }}</div>
-                <div class="registr__normal__data__item">{{ item.medicinePrice }}</div>
-                <div class="registr__normal__data__item">{{ item.medicineCount }}</div>
-                <div class="registr__normal__data__item">{{ item.medicineType }}</div>
-                <div class="registr__normal__data__item">{{ item.paymentStatus }}</div>
-                <div class="registr__normal__data__item">{{ item.createAt.slice(0,10) }}</div>
-                <div class="registr__normal__data__item">...</div>
+            <div v-else>
+                <van-empty description="暂无数据" />
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
+import { getMedicalList } from '@/api';
 import Header from '@/components/admin/header.vue';
-import { reactive } from 'vue';
+import { showToast } from 'vant';
+import { computed, onMounted, reactive } from 'vue';
 
 const data = reactive({
-    orders: [
-        {
-            "id": 1,
-            "medicineName": "咳嗽药",
-            "createUser": 1,
-            "medicinePrice": "30",
-            "medicineCount": 2,
-            "medicineType": "内科",
-            "paymentStatus": 0,
-            "createAt": "2023-05-18T16:41:00.000Z",
-            "updateAt": "2023-05-18T16:41:00.000Z"
-        },
-        {
-            "id": 2,
-            "medicineName": "咳嗽药",
-            "createUser": 1,
-            "medicinePrice": "30",
-            "medicineCount": 2,
-            "medicineType": "内科",
-            "paymentStatus": 0,
-            "createAt": "2023-05-18T16:41:00.000Z",
-            "updateAt": "2023-05-18T16:41:00.000Z"
-        },
-        {
-            "id": 3,
-            "medicineName": "咳嗽药",
-            "createUser": 1,
-            "medicinePrice": "30",
-            "medicineCount": 2,
-            "medicineType": "内科",
-            "paymentStatus": 0,
-            "createAt": "2023-05-18T16:41:00.000Z",
-            "updateAt": "2023-05-18T16:41:00.000Z"
-        },
-        {
-            "id": 4,
-            "medicineName": "咳嗽药",
-            "createUser": 1,
-            "medicinePrice": "30",
-            "medicineCount": 2,
-            "medicineType": "内科",
-            "paymentStatus": 0,
-            "createAt": "2023-05-18T16:41:00.000Z",
-            "updateAt": "2023-05-18T16:41:00.000Z"
-        },
-        {
-            "id": 5,
-            "medicineName": "咳嗽药",
-            "createUser": 1,
-            "medicinePrice": "30",
-            "medicineCount": 2,
-            "medicineType": "内科",
-            "paymentStatus": 0,
-            "createAt": "2023-05-18T16:41:00.000Z",
-            "updateAt": "2023-05-18T16:41:00.000Z"
-        },
-        {
-            "id": 6,
-            "medicineName": "咳嗽药",
-            "createUser": 1,
-            "medicinePrice": "30",
-            "medicineCount": 2,
-            "medicineType": "内科",
-            "paymentStatus": 0,
-            "createAt": "2023-05-18T16:41:00.000Z",
-            "updateAt": "2023-05-18T16:41:00.000Z"
-        },
-        {
-            "id": 1,
-            "medicineName": "咳嗽药",
-            "createUser": 1,
-            "medicinePrice": "30",
-            "medicineCount": 2,
-            "medicineType": "内科",
-            "paymentStatus": 0,
-            "createAt": "2023-05-18T16:41:00.000Z",
-            "updateAt": "2023-05-18T16:41:00.000Z"
-        },
-        {
-            "id": 2,
-            "medicineName": "咳嗽药",
-            "createUser": 1,
-            "medicinePrice": "30",
-            "medicineCount": 2,
-            "medicineType": "内科",
-            "paymentStatus": 0,
-            "createAt": "2023-05-18T16:41:00.000Z",
-            "updateAt": "2023-05-18T16:41:00.000Z"
-        },
-        {
-            "id": 3,
-            "medicineName": "咳嗽药",
-            "createUser": 1,
-            "medicinePrice": "30",
-            "medicineCount": 2,
-            "medicineType": "内科",
-            "paymentStatus": 0,
-            "createAt": "2023-05-18T16:41:00.000Z",
-            "updateAt": "2023-05-18T16:41:00.000Z"
-        },
-        {
-            "id": 4,
-            "medicineName": "咳嗽药",
-            "createUser": 1,
-            "medicinePrice": "30",
-            "medicineCount": 2,
-            "medicineType": "内科",
-            "paymentStatus": 0,
-            "createAt": "2023-05-18T16:41:00.000Z",
-            "updateAt": "2023-05-18T16:41:00.000Z"
-        },
-        {
-            "id": 5,
-            "medicineName": "咳嗽药",
-            "createUser": 1,
-            "medicinePrice": "30",
-            "medicineCount": 2,
-            "medicineType": "内科",
-            "paymentStatus": 0,
-            "createAt": "2023-05-18T16:41:00.000Z",
-            "updateAt": "2023-05-18T16:41:00.000Z"
-        },
-        {
-            "id": 6,
-            "medicineName": "咳嗽药",
-            "createUser": 1,
-            "medicinePrice": "30",
-            "medicineCount": 2,
-            "medicineType": "内科",
-            "paymentStatus": 0,
-            "createAt": "2023-05-18T16:41:00.000Z",
-            "updateAt": "2023-05-18T16:41:00.000Z"
-        },
-    ],
-    bussinesOrder: []
+    medList: [],
 });
 
+// check empty 
+const isEmpty = computed(() => {
+    if (data.medList.length === 0) {
+        return false;
+    }
+    return true;
+})
+
+onMounted(() => {
+    getMedicalList().then(
+        res => {
+            if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+                data.medList = res.data.data;
+                return;
+            }
+            showToast('获取药品列表失败');
+            return;
+        }
+    ).catch(err => {
+        console.log(err);
+        showToast('获取药品列表失败');
+    })
+})
 
 </script>
 
@@ -240,7 +103,6 @@ const data = reactive({
 
     &__normal
         width: 100%
-        max-height: 400px
         overflow: auto
         background: #fff
         border-radius: 10px

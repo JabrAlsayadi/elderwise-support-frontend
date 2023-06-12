@@ -7,7 +7,7 @@
             </div>
             <div class="register__info__tab__title">住院</div>
         </div>
-        <div class="register__info__box">
+        <div class="register__info__box" v-if="lenOfInfo">
             <div class="register__info__box__types">
                 <div 
                 v-for="(item, index) in types"
@@ -17,24 +17,23 @@
                 @click="showType(index)">{{ item.name }}</div>
             </div>
             <div 
-                v-for="(item, index) in hospital"
+                v-for="(item, index) in data.hospital"
                 :key="index"
                 class="register__info__box__body">
                 <div
                     v-if="type === 0"
                     class="register__info__box__body__item">
-                    <div v-if="item.medicineType === 'neike'">
+                    <div v-if="item.medicineType === 'neike' || item.medicineType === '内科'">
                         <div class="register__info__box__body__item__img">
-                            <img :src="item.img" alt="">
+                            <img :src="item.roomImgUrl" alt="">
                         </div>
-                        <div class="register__info__box__body__item__name">{{ item.hospitalName }}</div>
-                        <div class="register__info__box__body__item__desc">{{ item.hospitalAddress }}</div>
-                        <div class="register__info__box__body__item__name">${{ item.fee }}</div>
-                        <div class="register__info__box__body__item__name">Floor: {{ item.floorNumber }}</div>
-                        <div class="register__info__box__body__item__name">Type: {{ item.roomType }}</div>
-                        <div class="register__info__box__body__item__name">Room number: {{ item.roomNumber }}</div>
+                        <div class="register__info__box__body__item__name">每日费用：{{ item.fee }}元</div>
+                        <div class="register__info__box__body__item__name">楼层：{{ item.floorNumber }}</div>
+                        <div class="register__info__box__body__item__name">房间类别: {{ item.roomType }}</div>
+                        <div class="register__info__box__body__item__name">房间号: {{ item.roomNumber }}</div>
+                        <div class="register__info__box__body__item__name">床位数: {{ item.bedNumber }}</div>
                         <div
-                            @click="registerEvent(item.name, item.type)"
+                            @click="registerEvent(item)"
                             class="register__info__box__body__item__btu"
                             >立刻预约</div>
                     </div>
@@ -42,18 +41,17 @@
                 <div
                     v-else-if="type === 1"
                     class="register__info__box__body__item">
-                    <div v-if="item.medicineType === 'waike'">
+                    <div v-if="item.medicineType === 'waike' || item.medicineType === '外科'">
                         <div class="register__info__box__body__item__img">
-                            <img :src="item.img" alt="">
+                            <img :src="item.roomImgUrl" alt="">
                         </div>
-                        <div class="register__info__box__body__item__name">{{ item.hospitalName }}</div>
-                        <div class="register__info__box__body__item__desc">{{ item.hospitalAddress }}</div>
-                        <div class="register__info__box__body__item__name">${{ item.fee }}</div>
-                        <div class="register__info__box__body__item__name">Floor: {{ item.floorNumber }}</div>
-                        <div class="register__info__box__body__item__name">Type: {{ item.roomType }}</div>
-                        <div class="register__info__box__body__item__name">Room number: {{ item.roomNumber }}</div>
+                        <div class="register__info__box__body__item__name">每日费用：{{ item.fee }}元</div>
+                        <div class="register__info__box__body__item__name">楼层：{{ item.floorNumber }}</div>
+                        <div class="register__info__box__body__item__name">房间类别: {{ item.roomType }}</div>
+                        <div class="register__info__box__body__item__name">房间号: {{ item.roomNumber }}</div>
+                        <div class="register__info__box__body__item__name">床位数: {{ item.bedNumber }}</div>
                         <div
-                            @click="registerEvent(item.name, item.type)"
+                            @click="registerEvent(item)"
                             class="register__info__box__body__item__btu"
                             >立刻预约</div>
                     </div>
@@ -61,45 +59,43 @@
                 <div
                     v-else-if="type === 2"
                     class="register__info__box__body__item">
-                    <div v-if="item.medicineType === 'erke'">
+                    <div v-if="item.medicineType === 'erke' || item.medicineType === '儿科'">
                         <div class="register__info__box__body__item__img">
-                            <img :src="item.img" alt="">
+                            <img :src="item.roomImgUrl" alt="">
                         </div>
-                        <div class="register__info__box__body__item__name">{{ item.hospitalName }}</div>
-                        <div class="register__info__box__body__item__desc">{{ item.hospitalAddress }}</div>
-                        <div class="register__info__box__body__item__name">${{ item.fee }}</div>
-                        <div class="register__info__box__body__item__name">Floor: {{ item.floorNumber }}</div>
-                        <div class="register__info__box__body__item__name">Type: {{ item.roomType }}</div>
-                        <div class="register__info__box__body__item__name">Room number: {{ item.roomNumber }}</div>
+                        <div class="register__info__box__body__item__name">每日费用：{{ item.fee }}元</div>
+                        <div class="register__info__box__body__item__name">楼层：{{ item.floorNumber }}</div>
+                        <div class="register__info__box__body__item__name">房间类别: {{ item.roomType }}</div>
+                        <div class="register__info__box__body__item__name">房间号: {{ item.roomNumber }}</div>
+                        <div class="register__info__box__body__item__name">床位数: {{ item.bedNumber }}</div>
                         <div
-                            @click="registerEvent(item.name, item.type)"
+                            @click="registerEvent(item)"
                             class="register__info__box__body__item__btu"
                             >立刻预约</div>
                     </div>
                 </div>
             </div>
         </div>
+        <div v-else>
+            <van-empty description="暂无数据" />
+        </div>
     </div>
-
     <van-popup 
         v-model:show="showPop"
         round
-        :style="{ width: '95%', height: 'auto'}"
-    >
-        <CheckIn 
-        :hoispitalName="'shanghai'"
-        :hoispitalAddress="'shanghai'"
-        :doctorName="popusData.doctorName"
-        :type="popusData.type"/>
+        position="bottom"
+        :style="{ width: '100%', height: 'auto'}">
+        <CheckIn :item="data.item" />
     </van-popup>
+
 </template>
 
 <script setup>
 
+import { roomListByHospital } from '@/api';
 import CheckIn from '@/components/mobile/popups/checkin.vue'
 import router from '@/router/co-router';
-import { reactive, ref, inject } from 'vue'
-
+import { reactive, ref, onMounted,watchEffect, computed } from 'vue'
 
 const type = ref(0)
 const types = reactive([
@@ -117,75 +113,35 @@ const types = reactive([
     }
 ])
 
-const hospital = reactive([
-    {
-        "id": 1,
-        "img": 'https://pic.52112.com/180603/JPG-180603_131/IEMFbC3xNq_small.jpg',
-        "hospitalName": "shanghaiyiyuan",
-        "createUser": 1,
-        "hospitalAddress": "shanghai",
-        "medicineType": "neike",
-        "roomType": "vip",
-        "bedNumber": 100,
-        "floorNumber": 5,
-        "roomNumber": 501,
-        "fee": 500,
-        "reservationAt": "2023-05-12T05:22:00.000Z",
-        "checkInAt": "2023-03-25T16:00:00.000Z",
-        "checkOutAt": "2023-03-25T16:00:00.000Z",
-        "paymentStatus": 0
-    },
-    {
-        "id": 2,
-        "img": 'https://pic.52112.com/180603/JPG-180603_131/IEMFbC3xNq_small.jpg',
-        "hospitalName": "beijingyiyuan",
-        "createUser": 1,
-        "hospitalAddress": "beijing",
-        "medicineType": "erke",
-        "roomType": "vip",
-        "bedNumber": 200,
-        "floorNumber": 4,
-        "roomNumber": 401,
-        "fee": 300,
-        "reservationAt": "2023-05-12T05:22:00.000Z",
-        "checkInAt": "2023-03-25T16:00:00.000Z",
-        "checkOutAt": "2023-03-25T16:00:00.000Z",
-        "paymentStatus": 0
-    },
-    {
-        "id": 3,
-        "img": 'https://pic.52112.com/180603/JPG-180603_131/IEMFbC3xNq_small.jpg',
-        "hospitalName": "xianyiyuan",
-        "createUser": 1,
-        "hospitalAddress": "xian",
-        "medicineType": "waike",
-        "roomType": "vip",
-        "bedNumber": 150,
-        "floorNumber": 2,
-        "roomNumber": 201,
-        "fee": 100,
-        "reservationAt": "2023-05-12T05:22:00.000Z",
-        "updateAt": "2023-05-12T05:22:00.000Z",
-        "checkInAt": "2023-03-25T16:00:00.000Z",
-        "checkOutAt": "2023-03-25T16:00:00.000Z",
-        "paymentStatus": 0
-    },
-])
+const data = reactive({
+    hospital: [
+        {
+                "id": 1,
+                "hospitalId": 1,
+                "createUser": 1,
+                "medicineType": "neike",
+                "roomType": "vip",
+                "bedNumber": 100,
+                "floorNumber": 5,
+                "roomNumber": 501,
+                "fee": 500,
+                "reservationAt": "2023-05-26T04:25:00.000Z",
+                "updateAt": "2023-05-26T04:25:00.000Z",
+                "checkInAt": "2023-03-25T16:00:00.000Z",
+                "checkOutAt": "2023-03-25T16:00:00.000Z",
+                "paymentStatus": 0
+        },
+    ],
+    item: {}
+})
 
 const showType = (index) => {
     type.value = index
 }
 
-/*
-    back to main page
-*/
 const goBack = () => {
     router.push('/main')
 }
-
-/**
- * show registeration popup
- */
 
 const showPop = ref(false);
 
@@ -193,24 +149,31 @@ const goRegister = () => {
     showPop.value = true;
 }
 
-const popusData = reactive({
-    hoispital: '',
-    doctorName: '',
-    type: ''
+// check empty
+const lenOfInfo = computed(() => {
+    if (data.hospital.length === 0)
+        return false
+    return true
 })
 
-const addPopusData = (doctorName, type) => {
-    popusData.hoispital = inject('hoispital')
-    popusData.doctorName = doctorName
-    popusData.type = type
-    return;
-}
+onMounted(() => {
+    const query = router.currentRoute.value.params.id;
+    const url = `/rooms/hospital/${query}`
+    roomListByHospital(url).then(res => {
+        if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+            watchEffect(() => {
+                data.hospital = res.data.data
+            })
+        }
+    }).catch(err => {
+        console.log(err);
+    })
+})
 
-const registerEvent = (hoispital, doctorName, type) => {
-    addPopusData(hoispital, doctorName, type)
+const registerEvent = (item) => {
+    data.item = item
     goRegister()
 }
-
 </script>
 
 <style lang="stylus" scoped>

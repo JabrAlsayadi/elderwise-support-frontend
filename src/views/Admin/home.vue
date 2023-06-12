@@ -2,13 +2,12 @@
 <template>
     
     <div class="admin__main">
-        <h1 class="admin__main__text">Welcome to admin web</h1>
+        <h1 class="admin__main__text">欢迎来老有所联后台管理</h1>
         <div class="admin__main__box">
-            <div class="admin__main__box__item" @click="goPage('/users')">user managment</div>
-            <div class="admin__main__box__item" @click="goPage('/Registeration')">Registeration</div>
-            <div class="admin__main__box__item" @click="goPage('/medicine')">Medicine</div>
-            <div class="admin__main__box__item" @click="goPage('/help')">Help</div>
-            <div class="admin__main__box__item" @click="goPage('/feedback')">FeedBack</div>
+            <div class="admin__main__box__item" @click="goPage('/users')">用户管理</div>
+            <div class="admin__main__box__item" @click="goPage('/Registeration')">医院信息</div>
+            <div class="admin__main__box__item" @click="goPage('/medicine')">药品信息</div>
+            <div class="admin__main__box__item" @click="goPage('/help')">订单信息</div>
         </div>
     </div>
 </template>

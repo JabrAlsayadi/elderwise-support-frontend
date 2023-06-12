@@ -1,64 +1,91 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="medical__regirstrion">
-        <div class="medical__regirstrion__title">Registration Confirm</div>
+        <div class="medical__regirstrion__title">挂号确认信息</div>
         <div class="medical__regirstrion__basic-info">
-            <div class="medical__regirstrion__basic-info__hoispital-name">
-                <span class="sup__title">Hoispital Name:</span>
-                {{ props.hoispitalName  }}
-            </div>
-            <div class="medical__regirstrion__basic-info__hoispital-address">
-                <span class="sup__title">Address:</span>
-                {{ props.hoispitalAddress   }}
-            </div>
             <div class="medical__regirstrion__basic-info__doctor-name">
-                <span class="sup__title">Doctor:</span>
-                {{ props.doctorName  }}
+                <span class="sup__title">医生:</span>
+                {{ props.item.doctorName  }}
             </div>
             <div class="medical__regirstrion__basic-info__type">
-                <span class="sup__title">Type:</span>
-                {{ props.type  }}
+                <span class="sup__title">科种:</span>
+                {{ props.item.registrationType  }}
+            </div>
+            <div class="medical__regirstrion__basic-info__type">
+                <span class="sup__title">费用:</span>
+                {{ props.item.fee  }}
             </div>
         </div>
         <div class="medical__regirstrion__time">
+            <div class="sup__title">时间：</div>
             <input type="datetime-local" v-model="registerTime" >
+            <div class="sup__title">支付方式：</div>
             <select v-model="data.choosePaymentMethod">
-                <option value="0">Off Line</option>
-                <option value="1">Online</option>
+                <option value="0">线下</option>
+                <option value="1">线上</option>
             </select>
         </div>
-        <div class="medical__regirstrion__confirm">Confirm</div>
+        <div class="medical__regirstrion__confirm" @click.prevent="submitRegistration">确认</div>
     </div>
 </template>
 
 <script setup >
+import { orderRegistration } from '@/api/index';
+import router from '@/router/co-router';
+import { showToast } from 'vant';
 import { reactive } from 'vue';
 import { defineProps } from 'vue';
 
 const props = defineProps({
-    hoispitalName: {
-        type: String,
-        default: ''
-    },
-    hoispitalAddress: {
-        type: String,
-        default: ''
-    },
-    doctorName: {
-        type: String,
-        default: ''
-    },
-    type: {
-        type: String,
-        default: ''
+    item: {
+        type: Object,
+        default: () => {}
     },
 })
+
+const records = () => {
+    return router.push('/cart');
+}
 
 const data = reactive({
-    registerTime: '',
-    choosePaymentMethod: 'Payment Method',
+    registerTime: '2023-05-26 11:50:00',
+    choosePaymentMethod: 0,
 })
 
+const submitRegistration = () => {
+
+    orderRegistration(
+        {
+            "hospitalId": props.item.hospitalId || 1, 
+            "createUser": localStorage.getItem('userId') || 1,
+            "registrationType": props.item.registrationType || '内科', 
+            "doctorName": props.item.doctorName || '张三',
+            "fee": props.item.fee || 0, 
+            "registrationStatus": 1, 
+            "registrationAt": data.registerTime || "2023-05-26 11:50:00",
+            "paymentStatus": data.choosePaymentMethod || 0,
+        }
+    ).then(
+        res => {
+            if (res.code.toString() === '0' && res.data.data.toString() === '1') {
+                showToast('挂号成功');
+                records();
+                return;
+            }
+            showToast('挂号失败');
+        }
+    ).catch(
+        err => {
+            showToast('挂号失败');
+            console.log(err);
+        }
+    )
+    /**
+    {
+        
+    }
+     */
+}
 
 </script>
 
@@ -73,13 +100,14 @@ const data = reactive({
         margin-bottom 10px
     &__basic-info
         display flex
-        flex-direction column
+        flex-direction: column
         gap 10px
         font-size 16px
         margin 10px 0
     &__time
         display flex
         justify-content space-between
+        flex-direction: column
         gap 10px
         font-size 16px
         margin 10px 0

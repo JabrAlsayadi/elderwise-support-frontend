@@ -6,7 +6,7 @@
             </div>
             <div class="register__info__tab__title">挂号</div>
         </div>
-        <div class="register__info__box">
+        <div v-if="lenOfInfo" class="register__info__box">
             <div class="register__info__box__types">
                 <div 
                 v-for="(item, index) in types"
@@ -15,21 +15,21 @@
                 :class="{ active: type === index }"
                 @click="showType(index)">{{ item.name }}</div>
             </div>
-            <div 
-                v-for="(item, index) in doctors"
+            <div
+                v-for="(item, index) in data.info"
                 :key="index"
                 class="register__info__box__body">
                 <div
                     v-if="type === 0"
                     class="register__info__box__body__item">
-                    <div v-if="item.type === 'neike'">
+                    <div v-if="item.registrationType === 'neike' || item.registrationType === '内科'">
                         <div class="register__info__box__body__item__img">
-                            <img :src="item.img" alt="">
+                            <img :src="item.doctorImgUrl" alt="">
                         </div>
-                        <div class="register__info__box__body__item__name">{{ item.name }}</div>
-                        <div class="register__info__box__body__item__desc">{{ item.desc }}</div>
+                        <div class="register__info__box__body__item__name">{{ item.doctorName }}</div>
+                        <div class="register__info__box__body__item__desc">{{ item.doctorDesc }}</div>
                         <div
-                            @click="registerEvent(item.name, item.type)"
+                            @click="registerEvent(item)"
                             class="register__info__box__body__item__btu"
                             >立刻预约</div>
                     </div>
@@ -37,14 +37,14 @@
                 <div
                     v-else-if="type === 1"
                     class="register__info__box__body__item">
-                    <div v-if="item.type === 'waike'">
+                    <div v-if="item.registrationType === 'waike' || item.registrationType === '外科'">
                         <div class="register__info__box__body__item__img">
-                            <img :src="item.img" alt="">
+                            <img :src="item.doctorImgUrl" alt="">
                         </div>
-                        <div class="register__info__box__body__item__name">{{ item.name }}</div>
-                        <div class="register__info__box__body__item__desc">{{ item.desc }}</div>
+                        <div class="register__info__box__body__item__name">{{ item.doctorName }}</div>
+                        <div class="register__info__box__body__item__desc">{{ item.doctorDesc }}</div>
                         <div
-                            @click="registerEvent(item.name, item.type)"
+                            @click="registerEvent(item)"
                             class="register__info__box__body__item__btu"
                             >立刻预约</div>
                     </div>
@@ -52,19 +52,22 @@
                 <div
                     v-else-if="type === 2"
                     class="register__info__box__body__item">
-                    <div v-if="item.type === 'erke'">
+                    <div v-if="item.registrationType === 'erke' || item.registrationType === '儿科'">
                         <div class="register__info__box__body__item__img">
-                            <img :src="item.img" alt="">
+                            <img :src="item.doctorImgUrl" alt="">
                         </div>
-                        <div class="register__info__box__body__item__name">{{ item.name }}</div>
-                        <div class="register__info__box__body__item__desc">{{ item.desc }}</div>
+                        <div class="register__info__box__body__item__name">{{ item.doctorName }}</div>
+                        <div class="register__info__box__body__item__desc">{{ item.doctorDesc }}</div>
                         <div
-                            @click="registerEvent(item.name, item.type)"
+                            @click="registerEvent(item)"
                             class="register__info__box__body__item__btu"
                             >立刻预约</div>
                     </div>
                 </div>
             </div>
+        </div>
+        <div v-else>
+            <van-empty description="暂无数据" />
         </div>
     </div>
 
@@ -73,18 +76,36 @@
         round
         :style="{ width: '95%', height: 'auto'}"
     >
-        <Registration 
-        :hoispitalName="'shanghai'"
-        :hoispitalAddress="'shanghai'"
-        :doctorName="popusData.doctorName"
-        :type="popusData.type"/>
+        <Registration
+        :item="popusData.list"/>
     </van-popup>
 </template>
 
 <script setup>
 import Registration from '@/components/mobile/popups/Registration.vue';
 import router from '@/router/co-router';
-import { reactive, ref, inject } from 'vue'
+import { reactive, ref,computed, onMounted, watchEffect } from 'vue'
+import { doctorListByHospital } from '@/api/index';
+
+// const bus = getCurrentInstance().appContext.config.globalProperties.$bus
+
+const data = reactive({
+    info :[]
+})
+onMounted(() => {
+    const query = router.currentRoute.value.params.id;
+    const url = `/registration/doctor/${query}`
+    doctorListByHospital(url).then(res => {
+        if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+            watchEffect(() => {
+                data.info = res.data.data
+            })
+            console.log(data.info);
+        }
+    }).catch(err => {
+        console.log(err);
+    })
+})
 
 
 const type = ref(0)
@@ -103,49 +124,18 @@ const types = reactive([
     }
 ])
 
-const doctors = reactive([
-    {
-        img: 'https://www.yourfreecareertest.com/wp-content/uploads/2018/01/how_to_become_a_doctor.jpg',
-        name: '张三',
-        desc: '主治医师',
-        type: 'neike',
-    },
-    {
-        img: 'https://www.yourfreecareertest.com/wp-content/uploads/2018/01/how_to_become_a_doctor.jpg',
-        name: '李四',
-        desc: '主治医师',
-        type: 'waike',
-    },
-    {
-        img: 'https://www.yourfreecareertest.com/wp-content/uploads/2018/01/how_to_become_a_doctor.jpg',
-        name: '王五',
-        desc: '主治医师',
-        type: 'erke',
-    },
-    {
-        img: 'https://www.yourfreecareertest.com/wp-content/uploads/2018/01/how_to_become_a_doctor.jpg',
-        name: '赵六',
-        desc: '主治医师',
-        type: 'neike'
-    },
-    {
-        img: 'https://www.yourfreecareertest.com/wp-content/uploads/2018/01/how_to_become_a_doctor.jpg',
-        name: '钱七',
-        desc: '主治医师',
-        type: 'waike'
-    },
-    {
-        img: 'https://www.yourfreecareertest.com/wp-content/uploads/2018/01/how_to_become_a_doctor.jpg',
-        name: '孙八',
-        desc: '主治医师',
-        type: 'erke'
-    }
-
-])
 
 const showType = (index) => {
     type.value = index
 }
+
+// check empty
+const lenOfInfo = computed(() => {
+    if (data.info.length === 0)
+        return false
+    return true
+})
+
 
 /*
     back to main page
@@ -154,10 +144,6 @@ const goBack = () => {
     router.push('/main')
 }
 
-/**
- * show registeration popup
- */
-
 const showPop = ref(false);
 
 const goRegister = () => {
@@ -165,20 +151,16 @@ const goRegister = () => {
 }
 
 const popusData = reactive({
-    hoispital: '',
-    doctorName: '',
-    type: ''
+    list: [],
 })
 
-const addPopusData = (doctorName, type) => {
-    popusData.hoispital = inject('hoispital')
-    popusData.doctorName = doctorName
-    popusData.type = type
+const addPopusData = (item) => {
+    popusData.list = item;
     return;
 }
 
-const registerEvent = (hoispital, doctorName, type) => {
-    addPopusData(hoispital, doctorName, type)
+const registerEvent = (item) => {
+    addPopusData(item)
     goRegister()
 }
 

@@ -5,36 +5,57 @@
         <div class="login__title">欢迎回来</div>
         <div class="login__inputs">
             <div class="login__inputs__username">
-                <input type="text" placeholder="邮箱或手机号" v-model="data.username">
+                <input type="text" placeholder="邮箱或手机号"  v-model="data.username">
             </div>
             <div class="login__inputs__password">
-                <input type="text" placeholder="密码" v-model="data.password">
+                <input type="text" placeholder="密码"  v-model="data.password">
             </div>
         </div>
         <div class="login__forgot" @click="forgetPassword">忘记密码?</div>
         <div class="login__button" @click="login">登录</div>
-
     </div>
 </template>
 
 <script setup >
 import router from '@/router/co-router';
+import { showToast } from 'vant';
 import { reactive } from 'vue';
 
+import { loginReq } from '@/api/index'
 
-// eslint-disable-next-line no-unused-vars
 const data = reactive({
     username: '',
     password: '',
+    userData: 0,
 })
 
-// eslint-disable-next-line no-unused-vars
+const login = () => {
+    loginReq({
+        "userAccount":data.username,
+        "userPassword": data.password
+    }).then(
+        res => {
+            if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+                console.log(res.token);
+                localStorage.setItem('token', res.token);
+                localStorage.setItem('id', res.data.length === 0 ? 0 : res.data[0].id);
+                showToast('登录成功');
+                logined();
+                return;
+            }
+            showToast(res.msg);
+        }
+    ).catch(error => {
+        console.error('Login error:', error);
+        showToast('请再次输入您的信息');
+    });
+}
+
 const forgetPassword = () => {
     router.push('/forget-password');
 }
 
-// eslint-disable-next-line no-unused-vars
-const login = () => {
+const logined = () => {
     router.push('/service-type');
 }
 

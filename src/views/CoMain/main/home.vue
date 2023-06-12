@@ -13,24 +13,48 @@
             :class="{active: service === 2}"
             @click="chooseService(2)">住院</div>
         </div>
-        <Registration v-if="service === 0" />
-        <BuyMedical v-if="service === 1" />
-        <HospitalCheckIn v-if="service === 2" />
+        <Registration :regList="data.hospitalList" v-if="service === 0" />
+        <BuyMedical :medicineList="data.medicineList" v-if="service === 1" />
+        <HospitalCheckIn :hospitallist="data.hospitalList" v-if="service === 2" />
     </div>
     <Tabbar />
 </template>
 
 <script setup>
+
 import Tabbar from '@/components/mobile/comm/tabbar';
 import Registration from '@/components/mobile/home/Registration';
 import HospitalCheckIn from '@/components/mobile/home/HospitalCheckIn';
 import BuyMedical from '@/components/mobile/home/BuyMedical';
-import { ref } from 'vue';
+import { ref, reactive } from 'vue';
+import { hospitalList, medicineReq} from '@/api/index';
 
 const service = ref(0);
+const data = reactive({
+    hospitalList: [],
+    medicineList: []
+})
+
+
+hospitalList().then(
+    res => {
+        if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+            data.hospitalList = res.data.data
+        }
+    }
+).catch(err => console.log(err))
+
+
+medicineReq().then(
+        res => {
+            if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+                data.medicineList = res.data.data
+                console.log(data.medicineList);
+            }
+        }
+).catch(err => console.log(err))
 
 const chooseService = (index) => {
-    console.log(index);
     service.value = index;
 }
 

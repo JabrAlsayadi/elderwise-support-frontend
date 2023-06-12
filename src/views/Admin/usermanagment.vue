@@ -2,25 +2,21 @@
 <template>
     <Header />
     <div class="user__management">
-        <div class="user__management__search">
-            <van-search placeholder="Search" />
-            <div class="btn">Search</div>
-        </div>
         <div  class="user__management__info">
             <div class="user__management__info-title">
-                <div>User Management</div>
-                <div class="user__management__info-title__btn" @click="handleAdd" >New User</div>
+                <div>用户管理</div>
+                <div class="user__management__info-title__btn" @click="handleAdd" >添加用户</div>
             </div>
             <div class="user__management__info__box">
                 <div class="user__management__info__box__left">
                     <div class="user__management__info__box__left__list">
-                        <div class="user__management__info_box__left__list-item">Id</div>
-                        <div class="user__management__info_box__left__list-item">Name</div>
-                        <div class="user__management__info_box__left__list-item">Account</div>
-                        <div class="user__management__info_box__left__list-item">Role</div>
-                        <div class="user__management__info_box__left__list-item">Create At</div>
-                        <div class="user__management__info_box__left__list-item">Delete</div>
-                        <div class="user__management__info_box__left__list-item">Update</div>
+                        <div class="user__management__info_box__left__list-item">用户Id</div>
+                        <div class="user__management__info_box__left__list-item">用户名</div>
+                        <div class="user__management__info_box__left__list-item">账号</div>
+                        <div class="user__management__info_box__left__list-item">权限</div>
+                        <div class="user__management__info_box__left__list-item">添加时间</div>
+                        <!-- <div class="user__management__info_box__left__list-item">删除</div> -->
+                        <div class="user__management__info_box__left__list-item">修改</div>
                     </div>
                     <div v-for="(item, index) in data.listOfUsers" :key="index" class="list_items">
                         <div class="list_items__word" v-if="item.userRole === 'user'">
@@ -29,20 +25,20 @@
                             <div class="user__management__info_box__left__list-item">{{ item.userAccount }}</div>
                             <div class="user__management__info_box__left__list-item">{{ item.userRole }}</div>
                             <div class="user__management__info_box__left__list-item">{{ item.createAt.slice(0, 10) }}</div>
-                            <div class="user__management__info_box__left__list-item pont" @click="handleDelete"><van-icon name="delete-o" color="red" /></div>
-                            <div class="user__management__info_box__left__list-item pont" @click="handleUpdate"><van-icon name="edit" /></div>
+                            <!-- <div class="user__management__info_box__left__list-item pont" @click="handleDelete"><van-icon name="delete-o" color="red" /></div> -->
+                            <div class="user__management__info_box__left__list-item pont" @click="handleUpdate(item)"><van-icon name="edit" /></div>
                         </div>
                     </div>
                 </div>
                 <div class="user__management__info__box__right">
                     <div class="user__management__info__box__right__list">
-                        <div class="user__management__info_box__right__list-item">Id</div>
-                        <div class="user__management__info_box__right__list-item">Name</div>
-                        <div class="user__management__info_box__right__list-item">Account</div>
-                        <div class="user__management__info_box__right__list-item">Role</div>
-                        <div class="user__management__info_box__right__list-item">Create At</div>
-                        <div class="user__management__info_box__right__list-item">Delete</div>
-                        <div class="user__management__info_box__right__list-item">Update</div>
+                        <div class="user__management__info_box__right__list-item">用户Id</div>
+                        <div class="user__management__info_box__right__list-item">用户名</div>
+                        <div class="user__management__info_box__right__list-item">账号</div>
+                        <div class="user__management__info_box__right__list-item">权限</div>
+                        <div class="user__management__info_box__right__list-item">添加时间</div>
+                        <!-- <div class="user__management__info_box__right__list-item">删除</div> -->
+                        <div class="user__management__info_box__right__list-item">修改</div>
                     </div>
                     <div
                     v-for="(item, index) in data.listOfAdminsAndProvs" :key="index" 
@@ -50,11 +46,11 @@
                         <div class="list_items__word" v-if="item.userRole === 'prov' || item.userRole === 'admin'">
                             <div class="user__management__info_box__right__list-item">{{ item.id }}</div>
                             <div class="user__management__info_box__right__list-item">{{ item.userName }}</div>
-                            <div class="user__management__info_box__right__list-item">{{ item.userAccount }}</div>
+                            <div class="user__management__info_box__right__list-item">{{ item.userAccount.slice(0,5) }}</div>
                             <div class="user__management__info_box__right__list-item">{{ item.userRole }}</div>
                             <div class="user__management__info_box__right__list-item">{{ item.createAt.slice(0, 10) }}</div>
-                            <div class="user__management__info_box__right__list-item pont" @click="handleDelete"><van-icon name="delete-o" color="red" /></div>
-                            <div class="user__management__info_box__right__list-item pont" @click="handleUpdate"><van-icon name="edit" /></div>
+                            <!-- <div class="user__management__info_box__right__list-item pont" @click="handleDelete"><van-icon name="delete-o" color="red" /></div> -->
+                            <div class="user__management__info_box__right__list-item pont" @click="handleUpdate(item)"><van-icon name="edit" /></div>
                         </div>
                     </div>
                 </div>
@@ -65,26 +61,26 @@
         <div class="add__popup">
             <div class="add__popup__box">
                 <div class="add__popup__box__item">
-                    <div>User name</div>
+                    <div>用户名</div>
                     <input class="add__input" type="text" placeholder="User Name" v-model="data.userObj.userName">
                 </div>
                 <div class="add__popup__box__item">
-                    <div>Account</div>
+                    <div>账号</div>
                     <input class="add__input" type="text" placeholder="User account" v-model="data.userObj.userAccount">
                 </div>
                 <div class="add__popup__box__item">
-                    <div>User Role</div>
+                    <div>权限</div>
                     <select name="userrole" v-model="data.userObj.userRole">
-                        <option value="user">User</option>
-                        <option value="prov">Provider</option>
-                        <option value="admin">Admin</option>
+                        <option value="user">普通用户</option>
+                        <option value="prov">提供服务者</option>
+                        <option value="admin">管理者</option>
                     </select>
                 </div>
                 <div class="add__popup__box__item">
-                    <div>Password</div>
+                    <div>密码</div>
                     <input class="add__input" type="text" placeholder="Password" v-model="data.userObj.userPassword">
                 </div>
-                <div class="btn__b">Add User</div>
+                <div class="btn__b" @click.prevent="addNewUser">添加用户</div>
             </div>
         </div>
     </van-popup>
@@ -92,122 +88,52 @@
         <div class="add__popup">
             <div class="add__popup__box">
                 <div class="add__popup__box__item">
-                    <div>User id</div>
+                    <div>用户Id</div>
                     <div>{{ data.updateUserObj.userId }}</div>
                 </div>
                 <div class="add__popup__box__item">
-                    <div>User name</div>
+                    <div>用户名</div>
                     <input class="add__input" type="text" placeholder="User Name" v-model="data.updateUserObj.userName">
                 </div>
                 <div class="add__popup__box__item">
-                    <div>Account</div>
+                    <div>账号</div>
                     <input class="add__input" type="text" placeholder="User account" v-model="data.updateUserObj.userAccount">
                 </div>
                 <div class="add__popup__box__item">
-                    <div>User Role</div>
+                    <div>权限</div>
                     <select name="userrole" v-model="data.updateUserObj.userRole">
-                        <option value="user">User</option>
-                        <option value="prov">Provider</option>
-                        <option value="admin">Admin</option>
+                        <option value="user">普通用户</option>
+                        <option value="prov">提供服务者</option>
+                        <option value="admin">管理者</option>
                     </select>
                 </div>
                 <div class="add__popup__box__item">
-                    <div>Password</div>
+                    <div>密码</div>
                     <input class="add__input" type="text" placeholder="Password" v-model="data.updateUserObj.userPassword">
                 </div>
-                <div class="btn__b">Add User</div>
+                <div class="btn__b" @click.prevent="updateUserById">修改</div>
             </div>
         </div>
     </van-popup>
     <van-popup v-model:show="data.showDelete" round>
         <div class="delete__popup">
-            <div class="delete__popup__title">Are you sure to delete {{ data.deleteUserId }} User?</div>
-            <div class="btn__b">Confirm</div>
+            <div class="delete__popup__title">确定要删除此用户吗？</div>
+            <div class="btn__b">确认</div>
         </div>
     </van-popup>
 </template>
 
 <script setup>
+import { getUsersList, updateUser, registerReq } from '@/api/index';
 import Header from '@/components/admin/header.vue';
-import { reactive } from 'vue';
+import router from '@/router/admin-router';
+import { showToast } from 'vant';
+import { onMounted, reactive } from 'vue';
 const data = reactive({
     showDelete: false,
     showUpdate: false,
     showAdd: false,
-    users : [
-        {
-            "id": 1,
-            "userName": "admin",
-            "userAccount": "admin@gmail.com",
-            "userRole": "admin",
-            "userPassword": "admin1",
-            "createAt": "2023-05-15T02:38:00.000Z",
-            "updateAt": "2023-05-15T02:38:00.000Z"
-        },
-        {
-            "id": 2,
-            "userName": "user",
-            "userAccount": "admin@gmail.com",
-            "userRole": "user",
-            "userPassword": "admin1",
-            "createAt": "2023-05-15T02:38:00.000Z",
-            "updateAt": "2023-05-15T02:38:00.000Z"
-        },
-        {
-            "id": 3,
-            "userName": "prov",
-            "userAccount": "admin@gmail.com",
-            "userRole": "prov",
-            "userPassword": "admin1",
-            "createAt": "2023-05-15T02:38:00.000Z",
-            "updateAt": "2023-05-15T02:38:00.000Z"
-        },
-        {
-            "id": 4,
-            "userName": "prov",
-            "userAccount": "admin@gmail.com",
-            "userRole": "prov",
-            "userPassword": "admin1",
-            "createAt": "2023-05-15T02:38:00.000Z",
-            "updateAt": "2023-05-15T02:38:00.000Z"
-        },
-        {
-            "id": 5,
-            "userName": "prov",
-            "userAccount": "admin@gmail.com",
-            "userRole": "prov",
-            "userPassword": "admin1",
-            "createAt": "2023-05-15T02:38:00.000Z",
-            "updateAt": "2023-05-15T02:38:00.000Z"
-        },
-        {
-            "id": 6,
-            "userName": "admin",
-            "userAccount": "admin@gmail.com",
-            "userRole": "admin",
-            "userPassword": "admin1",
-            "createAt": "2023-05-15T02:38:00.000Z",
-            "updateAt": "2023-05-15T02:38:00.000Z"
-        },
-        {
-            "id": 7,
-            "userName": "user",
-            "userAccount": "admin@gmail.com",
-            "userRole": "user",
-            "userPassword": "admin1",
-            "createAt": "2023-05-15T02:38:00.000Z",
-            "updateAt": "2023-05-15T02:38:00.000Z"
-        },
-        {
-            "id": 8,
-            "userName": "user",
-            "userAccount": "admin@gmail.com",
-            "userRole": "user",
-            "userPassword": "admin1",
-            "createAt": "2023-05-15T02:38:00.000Z",
-            "updateAt": "2023-05-15T02:38:00.000Z"
-        },
-    ],
+    users : [],
     listOfUsers: [],
     listOfAdminsAndProvs: [],
     deleteUserId: null,
@@ -230,21 +156,89 @@ const handleAdd = () => {
     data.showAdd = true;
 }
 
-const handleUpdate = () => {
+const handleUpdate = (item) => {
     data.showUpdate = true;
+    data.updateUserObj.userId = item.id;
+    data.updateUserObj.userName = item.userName;
+    data.updateUserObj.userAccount = item.userAccount;
+    data.updateUserObj.userRole = item.userRole;
+    data.updateUserObj.userPassword = item.userPassword;
 }
 
-const handleDelete = () => {
-    data.showDelete = true;
-}
+// const handleDelete = () => {
+//     data.showDelete = true;
+// }
 
 const filterLists = () => {
     data.listOfUsers = data.users.filter(item => item.userRole === 'user');
     data.listOfAdminsAndProvs = data.users.filter(item => item.userRole === 'admin' || item.userRole === 'prov');
 }
 
-filterLists();
 
+onMounted(() => {
+    getUsersList().then(
+        res => {
+            if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+                data.users = res.data.data;
+                filterLists();
+                return;
+            }
+            showToast('获取用户列表失败');
+            return;
+        }
+    ).catch(err => {
+        console.log(err);
+        showToast('获取用户列表失败');
+    })
+})
+
+const updateUserById = () => {
+    updateUser(
+        {
+            "id": data.updateUserObj.userId,
+            "userName" : data.updateUserObj.userName,
+            "userAccount" : data.updateUserObj.userAccount,
+            "userPassword" : data.updateUserObj.userPassword,
+        }
+    ).then(
+        res => {
+            if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+                showToast('修改成功');
+                router.go(0);
+                return;
+            }
+            showToast('修改失败');
+            return;
+        }
+    ).catch(err => {
+        console.log(err);
+        showToast('修改失败');
+    })
+}
+
+const addNewUser = () => {
+    registerReq(
+        {
+            "userName" : data.userObj.userName,
+            "userAccount" : data.userObj.userAccount,
+            "userPassword" : data.userObj.userPassword,
+            "userRole" : data.userObj.userRole,
+        }
+    ).then(
+        res => {
+            if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+                showToast('添加成功');
+                router.go(0);
+                return;
+            }
+            showToast('添加失败');
+            return;
+        }
+    ).catch(err => {
+        console.log(err);
+        showToast('添加失败');
+    })
+}
 </script>
 
 <style lang="stylus" scoped>
@@ -273,7 +267,7 @@ filterLists();
     &__info
         display: flex
         flex-direction: column
-        margin: 0 20px
+        margin: 10px 20px
         &-title
             display: flex
             justify-content: space-between

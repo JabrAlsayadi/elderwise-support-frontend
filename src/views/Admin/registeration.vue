@@ -3,163 +3,159 @@
     <Header />
     <div class="registr">
         <div class="registr__title">
-            <div class="registr__title__text">Orders</div>
-            <div class="registr__title__btn">New Order</div>
+            <div class="registr__title__text">医院</div>
         </div>
         <div class="registr__normal">
             <div class="registr__normal__titles">
                 <div class="registr__normal__titles__item">Id</div>
-                <div class="registr__normal__titles__item">User</div>
-                <div class="registr__normal__titles__item">Hospital</div>
-                <div class="registr__normal__titles__item">Address</div>
-                <div class="registr__normal__titles__item">Type</div>
-                <div class="registr__normal__titles__item">Doctor</div>
-                <div class="registr__normal__titles__item">Fee</div>
-                <div class="registr__normal__titles__item">Status</div>
-                <div class="registr__normal__titles__item">Create At</div>
-                <div class="registr__normal__titles__item">Payment</div>
+                <div class="registr__normal__titles__item">创建用户Id</div>
+                <div class="registr__normal__titles__item">医院名称</div>
+                <div class="registr__normal__titles__item">医院地址</div>
+                <div class="registr__normal__titles__item">创建时间</div>
             </div>
-            <div class="registr__normal__data" v-for="(item, index) in data.userOrder" :key="index" >
-                <div class="registr__normal__data__item">{{ item.id }}</div>
-                <div class="registr__normal__data__item">{{ item.createUser }}</div>
-                <div class="registr__normal__data__item">{{ item.hospitalName }}</div>
-                <div class="registr__normal__data__item">{{ item.hospitalAddress }}</div>
-                <div class="registr__normal__data__item">{{ item.registrationType }}</div>
-                <div class="registr__normal__data__item">{{ item.doctorName }}</div>
-                <div class="registr__normal__data__item">{{ item.fee }}</div>
-                <div class="registr__normal__data__item">{{ item.paymentStatus }}</div>
-                <div class="registr__normal__data__item">{{ item.registrationAt }}</div>
-                <div class="registr__normal__data__item">{{ item.paymentStatus }}</div>
+            <div v-if="checkListEmpty(data.hospitalList)">
+                <div class="registr__normal__data" v-for="(item, index) in data.hospitalList" :key="index" >
+                    <div class="registr__normal__data__item">{{ item.id }}</div>
+                    <div class="registr__normal__data__item">{{ item.createUser }}</div>
+                    <div class="registr__normal__data__item">{{ item.hospitalName }}</div>
+                    <div class="registr__normal__data__item">{{ item.hospitalAddress }}</div>
+                    <div class="registr__normal__data__item">{{ sli(item.createAt) }}</div>
+                </div>
+            </div>
+            <div v-else>
+                <van-empty description="暂无数据" />
             </div>
         </div>
         <div class="registr__title">
-            <div class="registr__title__text">Orders</div>
-            <div class="registr__title__btn">New Order</div>
+            <div class="registr__title__text">医生</div>
         </div>
         <div class="registr__bussines registr__normal">
             <div class="registr__normal__titles">
                 <div class="registr__normal__titles__item">Id</div>
-                <div class="registr__normal__titles__item">User</div>
-                <div class="registr__normal__titles__item">Hospital</div>
-                <div class="registr__normal__titles__item">Address</div>
-                <div class="registr__normal__titles__item">Type</div>
-                <div class="registr__normal__titles__item">Doctor</div>
-                <div class="registr__normal__titles__item">Fee</div>
-                <div class="registr__normal__titles__item">Status</div>
-                <div class="registr__normal__titles__item">Create At</div>
-                <div class="registr__normal__titles__item">Payment</div>
+                <div class="registr__normal__titles__item">创建用户Id</div>
+                <div class="registr__normal__titles__item">医院id</div>
+                <div class="registr__normal__titles__item">医生名称</div>
+                <div class="registr__normal__titles__item">科室</div>
+                <div class="registr__normal__titles__item">挂号费用</div>
+                <div class="registr__normal__titles__item">添加时间</div>
             </div>
-            <div class="registr__normal__data" v-for="(item, index) in data.userOrder" :key="index" >
-                <div class="registr__normal__data__item">{{ item.id }}</div>
-                <div class="registr__normal__data__item">{{ item.createUser }}</div>
-                <div class="registr__normal__data__item">{{ item.hospitalName }}</div>
-                <div class="registr__normal__data__item">{{ item.hospitalAddress }}</div>
-                <div class="registr__normal__data__item">{{ item.registrationType }}</div>
-                <div class="registr__normal__data__item">{{ item.doctorName }}</div>
-                <div class="registr__normal__data__item">{{ item.fee }}</div>
-                <div class="registr__normal__data__item">{{ item.paymentStatus }}</div>
-                <div class="registr__normal__data__item">{{ item.registrationAt }}</div>
-                <div class="registr__normal__data__item">{{ item.paymentStatus }}</div>
+            <div v-if="checkListEmpty(data.doctorsList)">
+                <div class="registr__normal__data" v-for="(item, index) in data.doctorsList" :key="index" >
+                    <div class="registr__normal__data__item">{{ item.id }}</div>
+                    <div class="registr__normal__data__item">{{ item.createUser }}</div>
+                    <div class="registr__normal__data__item">{{ item.hospitalId }}</div>
+                    <div class="registr__normal__data__item">{{ item.doctorName }}</div>
+                    <div class="registr__normal__data__item">{{ item.registrationType }}</div>
+                    <div class="registr__normal__data__item">{{ item.fee }} 人民币</div>
+                    <div class="registr__normal__data__item">{{ sli(item.createAt) }}</div>
+                </div>
+            </div>
+            <div v-else>
+                <van-empty description="暂无数据" />
+            </div>
+        </div>
+        <div class="registr__title">
+            <div class="registr__title__text">医院房间</div>
+        </div>
+        <div class="registr__bussines registr__normal">
+            <div class="registr__normal__titles">
+                <div class="registr__normal__titles__item">Id</div>
+                <div class="registr__normal__titles__item">创建用户Id</div>
+                <div class="registr__normal__titles__item">医院id</div>
+                <div class="registr__normal__titles__item">科室</div>
+                <div class="registr__normal__titles__item">楼层</div>
+                <div class="registr__normal__titles__item">房间类别</div>
+                <div class="registr__normal__titles__item">房间号</div>
+                <div class="registr__normal__titles__item">床位</div>
+                <div class="registr__normal__titles__item">每日费用</div>
+                <div class="registr__normal__titles__item">添加时间</div>
+            </div>
+            <div v-if="checkListEmpty(data.roomsList)">
+                <div class="registr__normal__data" v-for="(item, index) in data.roomsList" :key="index" >
+                    <div class="registr__normal__data__item">{{ item.id }}</div>
+                    <div class="registr__normal__data__item">{{ item.createUser }}</div>
+                    <div class="registr__normal__data__item">{{ item.hospitalId }}</div>
+                    <div class="registr__normal__data__item">{{ item.medicineType }}</div>
+                    <div class="registr__normal__data__item">{{ item.floorNumber }}</div>
+                    <div class="registr__normal__data__item">{{ item.roomType }}</div>
+                    <div class="registr__normal__data__item">{{ item.roomNumber }}</div>
+                    <div class="registr__normal__data__item">{{ item.bedNumber }}</div>
+                    <div class="registr__normal__data__item">{{ item.fee }} 人民币</div>
+                    <div class="registr__normal__data__item">{{ sli(item.createAt) }}</div>
+                </div>
+            </div>
+            <div v-else>
+                <van-empty description="暂无数据" />
             </div>
         </div>
     </div>
 </template>
 
 <script setup>
+import { getDoctorsList, getHospitalsList, getRoomsList } from '@/api';
 import Header from '@/components/admin/header.vue';
-import { reactive } from 'vue';
+import { showToast } from 'vant';
+import { /* computed, */ onMounted, reactive } from 'vue';
 
 const data = reactive({
-    userOrder: [
-    {
-                "id": 1,
-                "hospitalName": "testing hospital",
-                "createUser": 1,
-                "hospitalAddress": "shanghai",
-                "registrationType": "neike",
-                "doctorName": "gabr",
-                "fee": 10,
-                "registrationStatus": 1,
-                "registrationAt": "2023-05-18T14:08:00.000Z",
-                "createAt": "2023-05-18T14:08:00.000Z",
-                "updateAt": "2023-05-18T14:08:00.000Z",
-                "paymentStatus": 0
-    },
-    {
-                "id": 1,
-                "hospitalName": "testing hospital",
-                "createUser": 1,
-                "hospitalAddress": "shanghai",
-                "registrationType": "neike",
-                "doctorName": "gabr",
-                "fee": 10,
-                "registrationStatus": 1,
-                "registrationAt": "2023-05-18T14:08:00.000Z",
-                "createAt": "2023-05-18T14:08:00.000Z",
-                "updateAt": "2023-05-18T14:08:00.000Z",
-                "paymentStatus": 0
-    },
-    {
-                "id": 1,
-                "hospitalName": "testing hospital",
-                "createUser": 1,
-                "hospitalAddress": "shanghai",
-                "registrationType": "neike",
-                "doctorName": "gabr",
-                "fee": 10,
-                "registrationStatus": 1,
-                "registrationAt": "2023-05-18T14:08:00.000Z",
-                "createAt": "2023-05-18T14:08:00.000Z",
-                "updateAt": "2023-05-18T14:08:00.000Z",
-                "paymentStatus": 0
-    },
-    {
-                "id": 1,
-                "hospitalName": "testing hospital",
-                "createUser": 1,
-                "hospitalAddress": "shanghai",
-                "registrationType": "neike",
-                "doctorName": "gabr",
-                "fee": 10,
-                "registrationStatus": 1,
-                "registrationAt": "2023-05-18T14:08:00.000Z",
-                "createAt": "2023-05-18T14:08:00.000Z",
-                "updateAt": "2023-05-18T14:08:00.000Z",
-                "paymentStatus": 0
-    },
-    {
-                "id": 1,
-                "hospitalName": "testing hospital",
-                "createUser": 1,
-                "hospitalAddress": "shanghai",
-                "registrationType": "neike",
-                "doctorName": "gabr",
-                "fee": 10,
-                "registrationStatus": 1,
-                "registrationAt": "2023-05-18T14:08:00.000Z",
-                "createAt": "2023-05-18T14:08:00.000Z",
-                "updateAt": "2023-05-18T14:08:00.000Z",
-                "paymentStatus": 0
-    },
-    {
-                "id": 1,
-                "hospitalName": "testing hospital",
-                "createUser": 1,
-                "hospitalAddress": "shanghai",
-                "registrationType": "neike",
-                "doctorName": "gabr",
-                "fee": 10,
-                "registrationStatus": 1,
-                "registrationAt": "2023-05-18T14:08:00.000Z",
-                "createAt": "2023-05-18T14:08:00.000Z",
-                "updateAt": "2023-05-18T14:08:00.000Z",
-                "paymentStatus": 0
-    },
-    ],
-    bussinesOrder: []
+    hospitalList: [],
+    doctorsList: [],
+    roomsList: []
 });
 
-console.log(data.userOrder);
+const sli = (str) => {
+    return str.slice(0, 10);
+}
+
+// check empty
+const checkListEmpty = (list) => {
+    if (list.length === 0) {
+        return false;
+    }
+    return true;
+}
+
+onMounted(() => {
+    getHospitalsList().then(
+        res => {
+            if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+                data.hospitalList = res.data.data;
+                return;
+            }
+            showToast('获取医院列表失败');
+            return;
+        }
+    ).catch(err => {
+        console.log(err);
+        showToast('获取医院列表失败');
+    });
+    getDoctorsList().then(
+        res => {
+            if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+                data.doctorsList = res.data.data;
+                return;
+            }
+            showToast('获取医生列表失败');
+            return;
+        }
+    ).catch(err => {
+        console.log(err);
+        showToast('获取医生列表失败');
+    });
+    getRoomsList().then(
+        res => {
+            if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+                data.roomsList = res.data.data;
+                return;
+            }
+            showToast('获取房间列表失败');
+            return;
+        }
+    ).catch(err => {
+        console.log(err);
+        showToast('获取房间列表失败');
+    });
+})
 
 </script>
 

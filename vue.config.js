@@ -3,6 +3,7 @@ const { defineConfig } = require('@vue/cli-service')
 const { VantResolver } = require('unplugin-vue-components/resolvers');
 const ComponentsPlugin = require('unplugin-vue-components/webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
+const path = require('path');
 
 module.exports = defineConfig({
   transpileDependencies: true,
@@ -61,5 +62,12 @@ module.exports = defineConfig({
         resolvers: [VantResolver()],
       }),
     ],
+  },
+  devServer: {
+    static: {
+      directory: path.join(__dirname, 'public'),
+    },
+    compress: true,
+    port: 9000,
   },
 })

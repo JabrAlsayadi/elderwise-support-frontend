@@ -1,29 +1,33 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
-    <div class="buy__medical">
+    <div class="buy__medical" v-if="len">
         <div v-for="(item, index) in state.data" :key="index"
-        class="buy__medical__container">
+            class="buy__medical__container">
             <div class="buy__medical__box__img">
-                <img class="buy__medical__box__img__item" :src="item.img" alt="" />
+                <img class="buy__medical__box__img__item" :src="item.imgUrl" alt="" />
             </div>
             <div class="buy__medical__box__info">
-                <div class="buy__medical__box__info__name">{{ item.name }}</div>
-                <div class="buy__medical__box__info__desc">{{ item.desc }}</div>
+                <div class="buy__medical__box__info__name">{{ item.medicineName }}</div>
+                <div class="buy__medical__box__info__desc">{{ item.medicineName }}</div>
                 <div class="buy__medical__box__info__op">
-                    <div class="buy__medical__box__info__op__price">${{ item.price }}</div>
+                    <div class="buy__medical__box__info__op__price">价格：{{ item.medicinePrice }}</div>
+                    <div class="buy__medical__box__info__op__price">数量: {{ item.medicineCount }}</div>
                     <div class="buy__medical__box__info__op__add">
                         <div class="buy__medical__box__info__op__add-m"
                         @click="minus(index)">-</div>
-                        <div class="buy__medical__box__info__op__add-count">{{ item.count }}</div>
+                        <div class="buy__medical__box__info__op__add-count">{{ item.countOfOrder }}</div>
                         <div class="buy__medical__box__info__op__add-p"
                         @click="add(index)">+</div>
                     </div>
                 </div>
             </div>
             <div class="buy__medical__btn">
-                <div class="buy__medical__btn__buy" @click="buyNow(item)">Buy Now</div>
+                <div class="buy__medical__btn__buy" @click="buyNow(item)">立刻购买</div>
             </div>
         </div>
+    </div>
+    <div v-else>
+        <van-empty description="暂无药品信息" />
     </div>
     <van-popup
         v-model:show="state.showPop"
@@ -32,81 +36,110 @@
     >
         <div class="container">
             <div class="container__main">
-                <img class="container__main__item" :src="state.orderData.img" alt="" />
+                <img class="container__main__item" :src="state.orderData.imgUrl" alt="" />
                 <div class="container__main__info">
-                    <div class="container__main__info__name">{{ state.orderData.name }}</div>
+                    <div class="container__main__info__name">{{ state.orderData.medicineName }}</div>
                     <div class="container__main__info__p">
-                        <div class="container__main__info__p__price">Price: ${{ state.orderData.price }}</div>
-                        <div class="container__main__info__p__count">Count:{{ state.orderData.count }}</div>
+                        <div class="container__main__info__p__price">价格:{{ state.orderData.medicinePrice }}元</div>
+                        <div class="container__main__info__p__count">购买数量:{{ state.orderData.countOfOrder }}</div>
+                    </div>
+                    <div class="payment__method">
+                        <div>支付方式：</div>
+                        <select v-model="state.choosePaymentMethod">
+                            <option value="0">线下</option>
+                            <option value="1">线上</option>
+                        </select>
                     </div>
                 </div>
             </div>
             <div class="container__btn">
-                <div class="container__btn__confirm">Confirm</div>
+                <div class="container__btn__confirm" @click.prevent="submitOrder">立刻下单</div>
             </div>
         </div>
     </van-popup>
 </template>
 
 <script setup>
-import { reactive } from 'vue';
-import img  from '@/assets/image/mobile/mainImgae.png';
+import { orderMedicine } from '@/api';
+import router from '@/router/co-router';
+import { showToast } from 'vant';
+import { computed, reactive, watchEffect } from 'vue';
 
 const state = reactive({
-    data : [
-        {
-            id: 1,
-            name: 'medicines name1',
-            desc: 'medicines desc is here ...',
-            price: '1123',
-            count: 1,
-            img: img
-        },
-        {
-            id: 2,
-            name: 'medicines name2',
-            desc: 'medicines desc is here ...',
-            price: '1243',
-            count: 2,
-            img: img
-        },
-        {
-            id: 3,
-            name: 'medicines name3',
-            desc: 'medicines desc is here ...',
-            price: '1231',
-            count: 0,
-            img: img
-        },
-    ],
+    url:"https://medlineplus.gov/images/Medicines_share.jpg",
+    data : [],
+    countOfOrder: 1,
     orderData: [],
-    showPop: false
+    showPop: false,
+    choosePaymentMethod: 0,
 });
 
+const props = defineProps({
+    medicineList: {
+        type: Array,
+        default: () => []
+    },
+})
+
+watchEffect(() => {
+    console.log(props.regList);
+    state.data = props.medicineList;
+})
+
 const add = (item) => {
-    state.data[item].count++;
-}   
+    state.data[item].countOfOrder++;
+}
 
 const minus = (item) => {
-    if (state.data[item].count <= 1) {
+    if (state.data[item].countOfOrder <= 1) {
         return;
     }
-    state.data[item].count--;
+    state.data[item].countOfOrder--;
 }
+
+const len =  computed(() => {
+    if (state.data.length > 0) {
+        return true;
+    }
+    return false;
+})
 
 const buyNow = (data) => {
     state.showPop = true;
     itemData(data);
 }
 
-// const closePop = () => {
-//     state.showPop = false;
-// }
-
 const itemData = (data) => {
     state.orderData = data;
 }
 
+const ordersRecord = () => {
+    return router.push('/cart');
+}
+
+const submitOrder = () => {
+    orderMedicine(
+        {
+            "createUser": localStorage.getItem('userId') || 1,
+            "medicineName": state.orderData.medicineName || '__',
+            "imgUrl": state.orderData.imgUrl || '__',
+            "medicinePrice": state.orderData.medicinePrice || 0,
+            "countOfOrder": state.orderData.countOfOrder || 1,
+            "medicineType": state.orderData.medicineType || '__',
+            "paymentStatus": state.choosePaymentMethod || 0
+        }
+    ).then(res => {
+        if (res.code.toString() === '0' && res.data.data.toString() === '1') {
+            state.showPop = false;
+            showToast('下单成功');
+            ordersRecord();
+            return;
+        }
+        showToast('下单失败');
+    }).catch(err => {
+        console.log(err);
+    })
+}
 
 </script>
 
@@ -126,14 +159,14 @@ const itemData = (data) => {
             justify-content: center
             &__item
                 width: 100%
-                height: 270px
+                height: 150px
                 border-radius: 10px
         &__info
             display: flex
             flex-direction: column
             padding: 0 10px
             &__name
-                font-size: 20px
+                font-size: 18px
                 font-weight: bold
                 margin-top: 5px
             &__desc
@@ -206,6 +239,8 @@ const itemData = (data) => {
             height: 80px
             border-radius: 10px
         &__info
+            width: 100%
+            height: 100px
             display: flex
             flex-direction: column
             justify-content: space-between
@@ -217,6 +252,7 @@ const itemData = (data) => {
                 display: flex
                 justify-content: space-between
                 align-items: center
+                padding-bottom: 5px
                 &__price
                     font-size: 16px
                     font-weight: bold
@@ -224,6 +260,7 @@ const itemData = (data) => {
                 &__count
                     font-weight: bold
                     color: rgb(6, 95, 70)
+            
     &__btn
         display: flex
         justify-content: center
@@ -240,4 +277,17 @@ const itemData = (data) => {
             color: #fff
             font-weight: bold
             cursor: pointer
+
+.payment__method 
+    display: flex
+    justify-content: space-between
+    align-items: center
+    &> div 
+        font-weight: bold
+        font-size: 15px
+    &> select
+        width: 50%
+        border: 1px solid #065f46;
+        padding: 10px;
+        border-radius: 5px;
 </style>

@@ -5,27 +5,52 @@
             <input v-model="username" type="text" placeholder="用户名">
             <input v-model="email" type="text" placeholder="邮箱">
         </div>
-        <div class="edit__profile__button">确定</div>
+        <div class="edit__profile__button" @click.prevent="profileUpdate">确定</div>
     </div>
 </template>
 
 <script setup>
 
+import { updateProfile } from '@/api';
+import router from '@/router/co-router';
+import { showToast } from 'vant';
 import { ref } from 'vue';
 import { defineProps } from 'vue';
 const props = defineProps({
-    username: {
-        type: String,
-        default: ''
-    },
-    email: {
-        type: String,
-        default: ''
+    item: {
+        type: Object,
+        default: () => {}
     }
 })
 
-const username = ref(props.username);
-const email = ref(props.email);
+const username = ref(props.item.userName);
+const email = ref(props.item.userAccount);
+
+const profileUpdate = () => {
+    updateProfile(
+        {
+            "id": props.item.id || localStorage.getItem('id'),
+            "userName": username.value,
+            "userAccount" : email.value,
+            "userPassword" : props.item.userPassword,
+        }
+    ).then(
+        res => {
+            if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+                showToast('修改成功');
+                // 刷新页面
+                router.go(0);
+                return;
+            }
+            showToast(res.msg);
+        }
+    ).catch(
+        err => {
+            console.error(err);
+        }
+    );
+}
+
 
 </script>
 

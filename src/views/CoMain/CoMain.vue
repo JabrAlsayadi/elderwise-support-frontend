@@ -6,7 +6,6 @@
         <div class="main__desc">我们是致力于帮助老年人的在线服务平台，提供便捷的网购、医疗和信息获取等功能，以改善他们的日常生活</div>
         <div class="main__buttons">
             <div class="main__buttons__sign_up" @click="showPops('login')">登录</div>
-            <!-- <div class="main__buttons__login" @click="showPops('login')">登录</div> -->
         </div>
         <van-popup
             v-model:show="loginPop"
@@ -18,31 +17,13 @@
 </template>
 
 <script setup >
-
-// eslint-disable-next-line no-unused-vars
 import login from '@/components/mobile/popups/login.vue';
-// import register from '@/components/mobile/popups/register.vue';
 import { ref } from 'vue';
-import { registerReq } from "@/api/index";
-
-
-    const registerMethod =  async () => {
-        const res = await registerReq({
-            "userName":"admin1",
-            "userAccount":"admin1@gmail.com",
-            "userRole":"admin",
-            "userPassword":"admin11"
-        });
-
-        if (res.status === '0' && res.msg === 'success') {
-            console.log('Done')
-        }
-    }
-    registerMethod()
 
 const registerPop = ref(false);
 const loginPop = ref(false);
-// eslint-disable-next-line no-unused-vars
+
+
 const showPops = (who) => {
     who === 'login' ? loginPop.value = true : registerPop.value = true;
 }

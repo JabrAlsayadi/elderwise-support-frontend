@@ -2,9 +2,9 @@ import { createRouter, createWebHashHistory, createWebHistory } from 'vue-router
 
 const routes = [
     {
-        path: '/home',
+        path: '/',
         name: 'main',
-        meta: { requiresAuth: false },
+        meta: { requiresAuth: true },
         component: () => import(/* webpackChunkName: "main" */'../views/Prov/Main.vue')
     },
     {
@@ -22,32 +22,26 @@ const routes = [
     {
         path: '/registeration',
         name: 'registeration',
-        meta: { requiresAuth: false },
+        meta: { requiresAuth: true },
         component: () => import(/* webpackChunkName: "main" */'../views/Prov/Registeration.vue')
     },
     {
         path: '/check-in',
         name: 'checkIn',
-        meta: { requiresAuth: false },
+        meta: { requiresAuth: true },
         component: () => import(/* webpackChunkName: "main" */'../views/Prov/CheckIn.vue')
     },
     {
         path: '/medicine',
         name: 'medicine',
-        meta: { requiresAuth: false },
+        meta: { requiresAuth: true },
         component: () => import(/* webpackChunkName: "main" */'../views/Prov/Medince.vue')
     },
     {
         path: '/orders',
         name: 'orders',
-        meta: { requiresAuth: false },
+        meta: { requiresAuth: true },
         component: () => import(/* webpackChunkName: "main" */'../views/Prov/Orders.vue')
-    },
-    {
-        path: '/profile',
-        name: 'profile',
-        meta: { requiresAuth: false },
-        component: () => import(/* webpackChunkName: "main" */'../views/Prov/Profile.vue')
     },
 ]
 
@@ -58,9 +52,9 @@ const router = new createRouter({
 })
 
 router.beforeEach((to, from, next) => {
-    const isAuthenticated = localStorage.getItem('token')
+    const isAuthenticated = localStorage.getItem('provToken')
     if (to.matched.some(record => record.meta.requiresAuth) && !isAuthenticated) {
-        next({ name: 'Login' })
+        next({ name: 'login' })
     } else {
         next()
     }

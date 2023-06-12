@@ -7,10 +7,12 @@
         </div>
 
         <div class="admin__login__right">
-            <div class="admin__login__right-title">Welcome to Business login</div>
-            <input v-model="data.userName" type="text" placeholder="User Name">
-            <input v-model="data.password" type="password" placeholder="Password">
+            <div class="admin__login__right-title">欢迎来老有所联商业登录</div>
+            <input v-model="data.userName" type="text" placeholder="手机号或邮箱">
+            <input v-model="data.password" :type="showPassword" placeholder="密码">
+            <div class="show__password" @click="changeShowPassword">{{ data.showPassword === true ? '隐藏密码' : '显示密码'}}</div>
             <div class="admin__login__right-btn" @click="login">登录</div>
+            <div>还没账号？<span class="go_login" @click.prevent="Register">注册</span></div>
         </div>
 
     </div>
@@ -18,16 +20,55 @@
 
 <script setup>
 import router from '@/router/prov-router';
-import loginLeft from '@/assets/image/admin/login_left.svg'
-import { reactive } from 'vue';
+import loginLeft from '@/assets/image/prov/prov__login_img.svg'
+import { computed, reactive } from 'vue';
+import { loginReq } from '@/api/index';
+import { showToast } from 'vant';
 
 const data = reactive({
     userName: '',
-    password: ''
+    password: '',
+    showPassword: false
 })
 
+const logined = () => {
+    router.push('/');
+}
+
+const changeShowPassword = () => {
+    data.showPassword = !data.showPassword;
+}
+
+const showPassword = computed(() => {
+    if (data.showPassword === true)
+        return 'text';
+    return 'password';
+})
+
+const Register = () => {
+    router.push('/register');
+}
 const login = () => {
-    router.push('/home');
+    loginReq({
+        "userAccount":data.userName,
+        "userPassword": data.password
+    }).then(
+        res => {
+            if (res.code.toString() === '0' && res.msg.toString() === 'success') {
+                console.log(res.token);
+                localStorage.setItem('provToken', res.token);
+                localStorage.setItem('provId', res.data.length === 0 ? 0 : res.data[0].id);
+                localStorage.setItem('provAccount', res.data.length === 0 ? '' : res.data[0].userAccount);
+                showToast('登录成功');
+                logined();
+                return;
+            }
+            showToast('请再次输入您的信息');
+        }
+    ).catch(error => {
+        console.error('Login error:', error);
+        showToast('请再次输入您的信息');
+    });
 }
 
 </script>
@@ -72,7 +113,7 @@ $m_l_q = 768px
         &-btn
             width: 300px
             height: 40px
-            background-color: #065F46
+            background-color: #1a3045
             border-radius: 5px
             color: #fff
             border: 1px solid #fff
@@ -88,7 +129,16 @@ $m_l_q = 768px
         &__left
             display: none
 
-
+.go_login
+    font-size: 16px
+    font-weight: bold
+    color: blue
+    cursor: pointer
+.show__password
+    padding-bottom: 10px
+    font-size: 14px
+    color: blue
+    cursor: pointer
 </style>
 
 

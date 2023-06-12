@@ -1,13 +1,12 @@
 <!-- eslint-disable vue/multi-word-component-names -->
 <template>
     <div class="prov__main">
-        <h1 class="prov__main__text">Welcome to Business web</h1>
+        <h1 class="prov__main__text">欢迎来老有所联商业</h1>
         <div class="prov__main__box">
-            <div class="prov__main__box__item" @click="goPage('/registeration')">Registeration</div>
-            <div class="prov__main__box__item" @click="goPage('/check-in')">CheckIn</div>
-            <div class="prov__main__box__item" @click="goPage('/medicine')">Medicine</div>
-            <div class="prov__main__box__item" @click="goPage('/orders')">Orders</div>
-            <div class="prov__main__box__item" @click="goPage('/profile')">Profile</div>
+            <div class="prov__main__box__item" @click="goPage('/registeration')">创建实体</div>
+            <div class="prov__main__box__item" @click="goPage('/check-in')">医院信息</div>
+            <div class="prov__main__box__item" @click="goPage('/medicine')">药品</div>
+            <div class="prov__main__box__item" @click="goPage('/orders')">订单</div>
         </div>
     </div>
 </template>
